@@ -1,0 +1,12 @@
+[package]
+name = "csv-api"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+mysql = "17.0.0"
+rocket = "0.5.0-rc.2"
+dirs = "4.0"
+serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
