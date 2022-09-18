@@ -3,7 +3,7 @@ use serde_json::{json};
 use std::io;
 use rocket::data::{Data, ToByteUnit};
 use rocket::http::uri::Absolute;
-use rocket::response::content::{RawText,RawJson};
+use rocket::response::content::RawJson;
 use rocket::tokio::fs::{self, File};
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -14,9 +14,10 @@ const HOST: Absolute<'static> = uri!("http://localhost:8888"); //your url!
 
 #[post("/<index>", data = "<paste>")] //파일 받기
 async fn upload(index:String ,paste:Data<'_>) -> io::Result<String> {
-    let time = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis().to_string();
+    let time:String = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis().to_string();
 
-    paste.open(128.kibibytes()).into_file(format!("./upload/{}",time)).await?;
+    // paste = function::format(paste);
+    paste.open(128.megabytes()).into_file(format!("./upload/{}",time)).await?;
 
     if index == "stu_data"{ 
         //todo!("make stu_data");
@@ -27,8 +28,8 @@ async fn upload(index:String ,paste:Data<'_>) -> io::Result<String> {
 }
 
 #[get("/<file_url>")] //파일 주기
-async fn retrieve(file_url:String) -> Option<RawText<File>> {
-    File::open(format!("./upload/{}",file_url)).await.map(RawText).ok()
+async fn retrieve(file_url:String) -> Option<File> {
+    File::open(format!("./upload/{}",file_url)).await.ok()
 }
 
 #[delete("/<file_url>")] //파일 삭제
