@@ -3,18 +3,21 @@ use serde_json::{json};
 use std::io;
 use rocket::data::{Data, ToByteUnit};
 use rocket::http::uri::Absolute;
-use rocket::response::content::RawText;
+use rocket::response::content::{RawText,RawJson};
 use rocket::tokio::fs::{self, File};
 use std::time::{SystemTime, UNIX_EPOCH};
+
 mod db_connect;
 mod function;
 
 const HOST: Absolute<'static> = uri!("http://localhost:8888"); //your url!
 
 #[post("/<index>", data = "<paste>")] //파일 받기
-async fn upload(index:String ,paste: Data<'_>) -> io::Result<String> {
+async fn upload(index:String ,paste:Data<'_>) -> io::Result<String> {
     let time = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis().to_string();
+
     paste.open(128.kibibytes()).into_file(format!("./upload/{}",time)).await?;
+
     if index == "stu_data"{ 
         //todo!("make stu_data");
     } else{
@@ -34,7 +37,7 @@ async fn delete(file_url:String) -> Option<()> {
 }
 
 #[get("/")]
-fn mysql_json() -> String {
+fn mysql_json() -> RawJson<String> {
     let db_url:String = db_connect::connect();
     let pool = mysql::Pool::new(db_url).expect("연결실패");
     let query = "select * from name";
@@ -49,7 +52,7 @@ fn mysql_json() -> String {
         });
         vec.push(export)
     }
-    json!(vec).to_string()
+    RawJson(json!(vec).to_string())
 }
 
 #[get("/")]
