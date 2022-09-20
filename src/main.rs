@@ -13,16 +13,16 @@ mod function;
 
 const HOST: Absolute<'static> = uri!("http://localhost:8888"); //your url!
 
-#[post("/<index>", data = "<paste>")] //파일 받기
-async fn upload(index:String,mut paste:Data<'_>) -> io::Result<String> {
+#[post("/<channel>", data = "<paste>")] //파일 받기
+async fn upload(channel:String,mut paste:Data<'_>) -> io::Result<String> {
     let time:String = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis().to_string();
     
     // println!("{}", from_utf8(paste.peek(1024 * 1024).await).unwrap());
     
     let data:&str = from_utf8(paste.peek(1024 * 1024).await).unwrap();
-    function::file_format(data,time.clone()).expect("파일 권한 오류");
+    function::file_format(data,time.clone()).expect("error on file_format in function.rs");
 
-    if index == "stu_data"{ 
+    if channel == "stu_data"{ 
         //todo!("make stu_data");
     } else{
         //todo!("make reward_data");
