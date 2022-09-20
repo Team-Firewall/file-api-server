@@ -1,7 +1,8 @@
 #[macro_use] extern crate rocket;
 use serde_json::{json};
 use std::io;
-use rocket::data::{Data, ToByteUnit};
+use std::str::from_utf8;
+use rocket::data::Data;
 use rocket::http::uri::Absolute;
 use rocket::response::content::RawJson;
 use rocket::tokio::fs::{self, File};
@@ -13,11 +14,13 @@ mod function;
 const HOST: Absolute<'static> = uri!("http://localhost:8888"); //your url!
 
 #[post("/<index>", data = "<paste>")] //파일 받기
-async fn upload(index:String ,paste:Data<'_>) -> io::Result<String> {
+async fn upload(index:String,mut paste:Data<'_>) -> io::Result<String> {
     let time:String = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis().to_string();
-
-    // paste = function::format(paste);
-    paste.open(128.megabytes()).into_file(format!("./upload/{}",time)).await?;
+    
+    // println!("{}", from_utf8(paste.peek(1024 * 1024).await).unwrap());
+    
+    let data:&str = from_utf8(paste.peek(1024 * 1024).await).unwrap();
+    function::file_format(data,time.clone()).expect("파일 권한 오류");
 
     if index == "stu_data"{ 
         //todo!("make stu_data");
