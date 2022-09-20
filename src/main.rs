@@ -20,13 +20,8 @@ async fn upload(channel:String,mut paste:Data<'_>) -> io::Result<String> {
     // println!("{}", from_utf8(paste.peek(1024 * 1024).await).unwrap());
     
     let data:&str = from_utf8(paste.peek(1024 * 1024).await).unwrap();
-    function::file_format(data,time.clone()).expect("error on file_format in function.rs");
+    function::file_format(channel,data,time.clone()).expect("error on file_format in function.rs");
 
-    if channel == "stu_data"{ 
-        //todo!("make stu_data");
-    } else{
-        //todo!("make reward_data");
-    }
     Ok(format!("{}/{}",HOST,time))
 }
 
