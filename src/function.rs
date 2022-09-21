@@ -1,7 +1,7 @@
 use std::fs::File;
 use std::io::{Write, Error};
 
-pub(crate) fn file_format(channel:String,data:&str, time:String) -> Result<(),Error>{
+pub(crate) fn file_format(data:&str, time:String) -> Result<(),Error>{
     let path:&str = &format!("./upload/{}",time);
     
     let mut output = File::create(path)?;
@@ -19,13 +19,6 @@ pub(crate) fn file_format(channel:String,data:&str, time:String) -> Result<(),Er
     }
     result_data.pop();
     write!(output, "{}", result_data)?;
-
-    if channel == "stu_data"{ 
-        //todo!("make stu_data");
-    } else{
-        //todo!("make reward_data");
-    }
-    
     Ok(())
 }
 
