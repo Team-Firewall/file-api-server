@@ -39,7 +39,7 @@ async fn delete(file_url:String) -> Option<()> {
 async fn file_import(channel:String,file_url:String) -> io::Result<String>{
     if channel == "stu_data"{ 
         //todo!("make stu_data");
-        
+        function::insert_stu_data(file_url).expect("임포트 실패");
         Ok("200!".to_string())
     } else{
         //todo!("make reward_data");
