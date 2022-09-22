@@ -2,6 +2,8 @@ use std::fs::File;
 use std::io::{Write, Error, BufRead, self};
 use std::path::Path;
 
+use crate::db_connect;
+
 struct UserData {
     grade:String,
     class:String,
@@ -16,7 +18,23 @@ fn exist_check(file_url:String) -> bool{
     }
     false
 }
+fn random_string(size:usize) -> String {
+    use rand::Rng;
+    const CHARSET: &[u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ\
+                            abcdefghijklmnopqrstuvwxyz\
+                            0123456789)(*&^%$#@!~";
+    let password_len: usize = size;
+    let mut rng = rand::thread_rng();
 
+    let password: String = (0..password_len)
+        .map(|_| {
+            let idx = rng.gen_range(0..CHARSET.len());
+            CHARSET[idx] as char
+        })
+        .collect();
+
+    password
+}
 fn read_data_to_csv(file_url:String) -> Result<Vec<UserData>,&'static str>{
     if let Ok(lines) 
     = read_lines(&format!("./upload/{}",file_url)) {
@@ -68,7 +86,27 @@ pub(crate) fn insert_stu_data(file_url:String) -> Result<(),&'static str>{
     }
     let data:Vec<UserData> =read_data_to_csv(file_url).expect("csv 파일 읽다가 뭔가 잘못됨");
     //이제 vector 에 데이터를 db에 넣어야함
-    
+    let db_url:String = db_connect::connect();
+    let pool = mysql::Pool::new(db_url).expect("연결실패");
+    for one_data in data {
+        let mut one_data_id:String = String::new();
+        one_data_id.push_str(&one_data.grade);
+        one_data_id.push_str(&one_data.class);
+        one_data_id.push_str(&one_data.number);
+
+        let query= format!("INSERT INTO User(grade,class,number,name,phone,account,password,position,salt) VALUES({},{},{},{},{},{},1234,student,{});",
+        one_data.grade,
+        one_data.class,
+        one_data.number,
+        one_data.name,
+        one_data.phone,
+        one_data_id,
+        random_string(10)
+        );
+        // pool.prep_exec(query,()).expect("쿼리 오류");
+        // 이거 나중에 같이 검토 해보고 실행 시켜보는거로 합시다 ㅎㅎㅎ 잘  되는거 확인 했구요 그냥 csv만 잘 넘겨주면 잘 됩니다 호호 아 삽질 너무 많이 한듯
+        println!("{}",query);
+    }
     Ok(())
 }
 
