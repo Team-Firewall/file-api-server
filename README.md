@@ -1,8 +1,9 @@
 # file-api-server
 
 team firewall 의 백엔드 api 입니다.
-- 기능
-  - upload/download csv file
-  - csv import to mysql < 하는중
+- 미구현 기능
   - mysql export to csv file
 
+- 사용가능 기능
+  - upload/download csv file (약간의 협의 필요)
+  - csv import to mysql
