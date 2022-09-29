@@ -39,7 +39,7 @@ async fn delete(file_url:String) -> Option<()> {
 async fn file_import(channel:String,file_url:String) -> io::Result<String>{
     if channel == "stu_data"{ 
         //todo!("make stu_data");
-        function::insert_stu_data(file_url).expect("임포트 실패");
+        function::insert_stu_data(file_url).expect("파일 임포트 실패..");
         Ok("200!".to_string())
     } else{
         //todo!("make reward_data");
@@ -47,10 +47,10 @@ async fn file_import(channel:String,file_url:String) -> io::Result<String>{
     }
 }
 
-#[post("/")]
-async fn db_export(){ //db 조회하고 csv화 해서 리턴
-
-}
+// #[post("/<>")]
+// async fn db_export() -> File{ //db 조회하고 상벌점 테이블 csv화 해서 리턴
+    
+// }
 
 #[get("/")]
 fn mysql_json() -> RawJson<String> {
@@ -107,6 +107,6 @@ fn rocket() -> _ {
     rocket::build()
         .mount("/", routes![index, upload, delete, retrieve]) //csv
         .mount("/import", routes![file_import])
-        .mount("/export", routes![db_export])
+        // .mount("/export", routes![db_export])
         .mount("/mysql",routes![mysql_json]) //json
 }
