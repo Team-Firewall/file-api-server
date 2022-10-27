@@ -35,7 +35,7 @@ async fn delete(file_url:String) -> Option<()> {
     fs::remove_file(format!("./upload/{}",file_url)).await.ok()
 }
 
-#[post("/<channel>/<file_url>")] //파일로 db에 값 넣기
+#[post("/<channel>/<file_url>")] //올린 파일로 db에 값 넣기
 async fn file_import(channel:String,file_url:String) -> io::Result<String>{
     if channel == "stu_data"{ 
         //todo!("make stu_data");
@@ -98,6 +98,7 @@ fn index() -> &'static str {
         /<file_url>
             file_url 기반으로 파일 삭제
     } 
+    
     
     "
 }
